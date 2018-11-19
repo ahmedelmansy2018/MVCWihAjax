@@ -1,0 +1,47 @@
+﻿@model IEnumerable<SearchWihAjax.Models.Product>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+<script src="~/Scripts/jquery-1.8.2.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+
+@using (Ajax.BeginForm(new AjaxOptions { UpdateTargetId = "Products", InsertionMode = InsertionMode.Replace,  LoadingElementDuration=4000,
+    LoadingElementId="ahm", HttpMethod = "get" }))
+ { 
+<form>
+    <table>
+        <tr>
+            <td>    <input type="search" name="Term" id="Term" placeholder="EnterNameProduct" /></td>
+            <td><input type="submit" name="search" value="search " /></td>
+        </tr>
+    </table>
+</form>
+}
+<div id="Products">
+    @Html.Partial("_ProductPartial")
+  </div>
+
+@Ajax.ActionLink("ALLofProducts","All",(new AjaxOptions { UpdateTargetId = "Products", InsertionMode = InsertionMode.Replace, HttpMethod = "get",
+    LoadingElementDuration=9000,
+    LoadingElementId="ahm"
+}))
+<span>|</span>
+@Ajax.ActionLink("MAx3","Max3",(new AjaxOptions { UpdateTargetId = "Products", InsertionMode = InsertionMode.Replace, HttpMethod = "get",
+    LoadingElementDuration=9000,
+    LoadingElementId="ahm"
+}))
+<span>|</span>
+@Ajax.ActionLink("Min3","Min3",(new AjaxOptions { UpdateTargetId = "Products", InsertionMode = InsertionMode.Replace, HttpMethod = "get",
+    LoadingElementDuration=9000,
+    LoadingElementId="ahm"
+}))
+
+
+<div style="display:none" id="ahm">
+    <img src="~/Images/orderedList5.png" />
+</div>

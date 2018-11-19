@@ -1,0 +1,320 @@
+﻿@{
+    ViewBag.Title = " ";
+}
+<script src="~/Scripts/jquery-1.8.2.min.js"></script>
+<script >
+    
+    var ProductByid;
+    function getProductByid(id) {
+        ProductByid = id;
+        $.ajax({
+            url: "/Product/getProductByid/" + id,
+            type: "get",
+            datatype: "json",
+            success: function (prr) {
+                $("#namee").val(prr.Name);
+                $("#pricee").val(prr.Unitprice);
+                $("#unitsinstooke").val(prr.UnitsInstook);
+                $("#Cate").val(prr.Categoryid);
+
+                //   alert("success");
+                // alert(p.length);
+
+            },
+
+            error: function () {
+                alert("error")
+            },
+
+
+
+        });
+
+
+    }
+    $(document).ready(function () {
+        function getCategories() {
+            $.ajax({
+                url: "/Category/Categories",
+                type: "get",
+                datatype: "json",
+                success: function (p) {
+
+                    //   alert("success");
+                    // alert(p.length);
+                    $.each(p, function (i, Category) {
+                        $("#Cat").append("<option  value=" + Category.Categoryid + ">" + Category.Titel + "</option>")
+                        $("#Cate").append("<option  value=" + Category.Categoryid + ">" + Category.Titel + "</option>")
+                    });
+                },
+                error: function () {
+                    alert("error")
+                }
+
+
+            });
+        }
+        getCategories();
+    
+   
+        $("#bun").click(function () {
+         
+            var name = $("#name").val();
+            var price = $("#price").val();
+            var UnitsInstook = $("#unitsinstook").val();
+            var Categoryid = $("#Cat").val();
+
+            $.ajax({
+                url: "/Product/Create",
+                type: "Post",
+                datatype: "json",
+                data: {
+                    Name: name,
+                    Unitprice:price,
+                    UnitsInstook: UnitsInstook,
+                    Categoryid:Categoryid
+
+                },
+            
+
+                success: function (p) {
+                    if (p.Status == 1) {
+                        $("#notify").text(p.Message);
+                      $("#id").empty();
+                        getProducts();
+                        $("#alert").show();
+                    }
+                    else { $("#notify").text(p.Message); }
+                   
+                    $("#id").show();
+
+
+                },
+
+                error: function () {
+                    alert("error")
+                },
+
+            });
+        });
+        $("#BuEdi").click(function () {
+
+            var name = $("#namee").val();
+            var price = $("#pricee").val();
+            var UnitsInstook = $("#unitsinstooke").val();
+            var Categoryid = $("#Cate").val();
+
+            $.ajax({
+                url: "/Product/Edit/" + ProductByid,
+                type: "Post",
+                datatype: "json",
+                data: {
+                    Name: name,
+                    Unitprice: price,
+                    UnitsInstook: UnitsInstook,
+                    Categoryid: Categoryid
+
+                },
+
+
+                success: function (p) {
+                    if (p.Status == 1) {
+                        $("#notify").text(p.Message);
+                       
+                        $("#id").empty();
+                        getProducts();
+                        $("#alert").show();
+                    
+                        
+                    }
+                    else { $("#notify").text(p.Message); }
+
+                  
+
+
+                },
+
+                error: function () {
+                    alert("error")
+                },
+
+            });
+        });
+
+       
+        $("#BuDelete").click(function () {
+            $.ajax({
+                url: "/Product/Delete/" + ProductByid,
+                type: "Post",
+                datatype: "json",
+          
+                success: function (p) {
+                    if (p.Status == 1) {
+                        $("#notify").text(p.Message);
+
+                        $("#id").empty();
+                        getProducts();
+                      $("#alert").show();
+
+
+                    }
+                    else { $("#notify").text(p.Message); }
+
+
+
+
+                },
+
+                error: function () {
+                    alert("error")
+                },
+
+            });
+        });
+    });
+    function getProducts() {
+        $.ajax({
+            url: "/Product/getProducts",
+            type: "get",
+            datatype: "json",
+            success: function (p) {
+
+                //   alert("success");
+                // alert(p.length);
+                $.each(p, function (i, pr) {
+                    $("#id").append("<tr>" +
+                        "<th>" + pr.Name + "</th>" +
+                        "<th>" + pr.Unitprice + "</th>" +
+                        "<th>" + pr.UnitsInstook + "</th>" +
+                        "<th>" + pr.Titel + "</th>" +
+                        "<th><button id=" + pr.Productid + " OnClick= 'getProductByid(id)' data-toggle=modal data-target=#myModal >Edit</button></th>" +
+                        "<th> <button id=" + pr.Productid + " OnClick= 'getProductByid(id)' data-toggle=modal data-target=#mModal >Delete</button></th>" +
+                        "<tr>");
+
+                });
+            },
+
+            error: function () {
+                alert("error")
+            },
+
+
+
+
+
+
+        });
+
+    }
+    getProducts();
+ 
+
+   
+
+</script>
+<div id="alert" style="display:none" class="alert alert-success">
+    <strong>Success!</strong> You should <a href="#" class="alert-link">read this message</a>.
+</div>
+
+<table>
+    <tr>
+        <td>Name</td>
+        <td><input id="name" type="text"   /></td>
+    </tr>
+    <tr>
+        <td>price</td>
+        <td><input id="price" type="text" /></td>
+    </tr>
+    <tr>
+        <td>UnitsInstook</td>
+        <td><input id="unitsinstook" type="text" /></td>
+    </tr>
+    <tr>
+        <td>Categoryid</td>
+        <td><select id="Cat"> 
+           </select></td>
+    </tr>
+    <tr>
+        <td><input type="button" id="bun" value="Create" /></td>
+        <td id="notify">
+            
+        </td>
+    </tr>
+</table>
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit</h4>
+            </div>
+            <div class="modal-body">
+                <table>
+                    <tr>
+                        <td>Name</td>
+                        <td><input id="namee" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td>price</td>
+                        <td><input id="pricee" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td>UnitsInstook</td>
+                        <td><input id="unitsinstooke" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td>Categoryid</td>
+                        <td>
+                            <select id="Cate"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                      
+                        <td id="notify"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+               
+                <button id="BuEdi" type="button" class="btn btn-default" data-dismiss="modal">Edit</button>
+
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="mModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            <h2>Delete....???</h2>
+            </div>
+            <div class="modal-footer">
+                <button id="BuDelete" type="button" class="btn btn-default" data-dismiss="modal">Delete</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<table id="id">
+    <tr>
+        <th>NAme</th>
+        <th>Price</th>
+        <th>Unit</th>
+        <th>Category</th>
+    </tr>
+</table>
+
